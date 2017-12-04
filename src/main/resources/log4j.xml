@@ -10,4 +10,9 @@
     <logger name="com.tuxt">
         <level value="debug"></level>
     </logger>
+
+    <root>
+        <priority value="info"/>
+        <appender-ref ref="Console"/>
+    </root>
 </log4j:configuration>
