@@ -10,17 +10,20 @@ import javax.jms.*;
 /**
  * Created by tuxt on 2017/12/1.
  */
-public class DeferMessageListener implements SessionAwareMessageListener<TextMessage> {
+public class DeferMessageListener implements MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(DeferMessageListener.class);
 
     @Override
-    public void onMessage(TextMessage textMessage, Session session) {
-        try {
-            logger.info("I received a message :{}",textMessage.getText());
-            throw new JMSException("process failed");
-        } catch (JMSException e) {
-            logger.error(e.getMessage());
-            throw JmsUtils.convertJmsAccessException(e);
+    public void onMessage(Message message) {
+        if (message instanceof TextMessage) {
+            try {
+                TextMessage textMessage= (TextMessage) message;
+                logger.info("I received a message :{}",textMessage.getText());
+                throw new JMSException("process failed");
+            } catch (JMSException e) {
+                logger.error(e.getMessage());
+                throw JmsUtils.convertJmsAccessException(e);
+            }
         }
     }
 }
