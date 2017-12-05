@@ -17,8 +17,7 @@ public class DeferMessageListener implements SessionAwareMessageListener<TextMes
     public void onMessage(TextMessage textMessage, Session session) {
         try {
             logger.info("I received a message :{}",textMessage.getText());
-            session.rollback();
-//                throw new JMSException("process failed");
+            throw new JMSException("process failed");
         } catch (JMSException e) {
             logger.error(e.getMessage());
             throw JmsUtils.convertJmsAccessException(e);

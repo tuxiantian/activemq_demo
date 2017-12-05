@@ -48,6 +48,7 @@ DLQ-死信队列(Dead Letter Queue)用来保存处理失败或者过期的消息
 </jms:listener-container>
 <bean id="deferMessageListener" class="com.tuxt.activemq.demo.listener.DeferMessageListener"/>
 ```
+container-type="default"对应的类是：DefaultMessageListenerContainer
 ## 让消息重复投递的两种方式
 ```
 public void onMessage(TextMessage textMessage, Session session) {

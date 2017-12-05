@@ -37,6 +37,12 @@ http://www.springframework.org/schema/jms http://www.springframework.org/schema/
             <value>defer</value>
         </constructor-arg>
     </bean>
+    <bean id="transactionQueueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字 -->
+        <constructor-arg>
+            <value>transaction</value>
+        </constructor-arg>
+    </bean>
     <bean id="jmsTransactionManager"
           class="org.springframework.jms.connection.JmsTransactionManager">
         <property name="connectionFactory" ref="connectionFactory" />
@@ -52,10 +58,24 @@ http://www.springframework.org/schema/jms http://www.springframework.org/schema/
         <property name="pubSubDomain" value="false"/>
     </bean>
 
+    <bean id="transactionQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
+        <constructor-arg ref="connectionFactory"/>
+        <!-- 定义默认的队列名称-->
+        <property name="defaultDestinationName" value="transactionQueueDestination"/>
+        <!-- 非pub/sub模型（发布/订阅），即队列模式 -->
+        <property name="pubSubDomain" value="false"/>
+    </bean>
+
 
     <!-- 定义Queue监听器 -->
-    <jms:listener-container destination-type="queue" container-type="default" transaction-manager="jmsTransactionManager" connection-factory="connectionFactory" acknowledge="auto" receive-timeout="10000">
+    <jms:listener-container destination-type="queue" container-type="default" connection-factory="connectionFactory" acknowledge="auto" receive-timeout="10000">
         <jms:listener destination="deferQueueDestination" ref="deferMessageListener" concurrency="20"/>
     </jms:listener-container>
     <bean id="deferMessageListener" class="com.tuxt.activemq.demo.listener.DeferMessageListener"/>
+    <!--事务监听器-->
+    <jms:listener-container destination-type="queue" container-type="default" transaction-manager="jmsTransactionManager" connection-factory="connectionFactory" acknowledge="transacted" receive-timeout="10000">
+        <jms:listener destination="transactionQueueDestination" ref="transactionMessageListener" concurrency="20"/>
+    </jms:listener-container>
+    <bean id="transactionMessageListener" class="com.tuxt.activemq.demo.listener.TransactionMessageListener"/>
 </beans>
