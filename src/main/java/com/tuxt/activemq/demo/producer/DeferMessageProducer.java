@@ -20,7 +20,7 @@ public class DeferMessageProducer {
             TextMessage message = session.createTextMessage("hello");
             long time = 60 * 1000;
             long period=10 * 1000;
-            int repeat=4;
+            int repeat=1;
             message.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_DELAY, time);
             message.setLongProperty(ScheduledMessage.AMQ_SCHEDULED_PERIOD, period);
             message.setIntProperty(ScheduledMessage.AMQ_SCHEDULED_REPEAT, repeat);

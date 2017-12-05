@@ -11,6 +11,20 @@ http://www.springframework.org/schema/jms http://www.springframework.org/schema/
         <property name="userName" value="${mq.username}"/>
         <property name="password" value="${mq.password}"/>
         <property name="useAsyncSend" value="true" />
+        <property name="redeliveryPolicy">
+            <bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+                <!--是否在每次尝试重新发送失败后,增长这个等待时间-->
+                <property name="useExponentialBackOff" value="true"></property>
+                <!--重发次数,默认为6次-->
+                <property name="maximumRedeliveries" value="5"></property>
+                <!--重发时间间隔,默认为1秒-->
+                <property name="initialRedeliveryDelay" value="1000"></property>
+                <!--第一次失败后重新发送之前等待500毫秒,第二次失败再等待500 * 2毫秒,这里的2就是value-->
+                <property name="backOffMultiplier" value="2"></property>
+                <!--最大传送延迟，只在useExponentialBackOff为true时有效（V5.5），假设首次重连间隔为10ms，倍数为2，那么第 二次重连时间间隔为 20ms，第三次重连时间间隔为40ms，当重连时间间隔大的最大重连时间间隔时，以后每次重连时间间隔都为最大重连时间间隔。-->
+                <property name="maximumRedeliveryDelay" value="10000"></property>
+            </bean>
+        </property>
     </bean>
     <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory -->
     <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
@@ -23,6 +37,11 @@ http://www.springframework.org/schema/jms http://www.springframework.org/schema/
             <value>defer</value>
         </constructor-arg>
     </bean>
+    <bean id="jmsTransactionManager"
+          class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="connectionFactory" />
+    </bean>
+
     <!-- 定义JmsTemplate的Queue类型 -->
     <bean id="deferQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
         <!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
@@ -35,7 +54,7 @@ http://www.springframework.org/schema/jms http://www.springframework.org/schema/
 
 
     <!-- 定义Queue监听器 -->
-    <jms:listener-container destination-type="queue" container-type="default" connection-factory="connectionFactory" acknowledge="auto" receive-timeout="10000">
+    <jms:listener-container destination-type="queue" container-type="default" transaction-manager="jmsTransactionManager" connection-factory="connectionFactory" acknowledge="auto" receive-timeout="10000">
         <jms:listener destination="deferQueueDestination" ref="deferMessageListener" concurrency="20"/>
     </jms:listener-container>
     <bean id="deferMessageListener" class="com.tuxt.activemq.demo.listener.DeferMessageListener"/>
