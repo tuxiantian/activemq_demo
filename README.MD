@@ -88,5 +88,8 @@ public void onMessage(TextMessage textMessage, Session session) {
 
 [官方使用介绍](http://activemq.apache.org/delay-and-schedule-message-delivery.html)
 
-ActiveMQ from version 5.4 has an optional persistent scheduler built into the ActiveMQ message broker. It is enabled by setting the broker schedulerSupport attribute to true in the xml configuration.
-意思是说要在mq的xml配置文件中，broker节点处加入schedulerSupport属性，才能使mq的任务计划生效，于是，我尝试加入该属性修改activemq.xml 在`<broker>`里添加属性schedulerSupport="true" 重启mq后果然生效了。
+ActiveMQ from version 5.4 has an optional persistent scheduler built into the ActiveMQ message broker.
+ It is enabled by setting the broker schedulerSupport attribute to true in the xml configuration.
+
+意思是说要在mq的xml配置文件中，broker节点处加入schedulerSupport属性，才能使mq的任务计划生效，
+于是，我尝试加入该属性修改activemq.xml 在`<broker>`里添加属性schedulerSupport="true" 重启mq后果然生效了。
