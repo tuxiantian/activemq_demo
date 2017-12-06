@@ -1,6 +1,7 @@
 package com.tuxt.activemq.demo.api;
 
 import com.tuxt.activemq.demo.producer.DeferMessageProducer;
+import com.tuxt.activemq.demo.producer.TopicMessageProducer;
 import com.tuxt.activemq.demo.producer.TransactionMessageProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,6 +20,8 @@ public class TestApi {
     private DeferMessageProducer deferMessageProducer;
     @Autowired
     private TransactionMessageProducer transactionMessageProducer;
+    @Autowired
+    private TopicMessageProducer topicMessageProducer;
 
     @ResponseBody
     @RequestMapping(value = "sendDeferMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -30,5 +33,11 @@ public class TestApi {
     @RequestMapping(value = "sendTransactionMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public void sendTransactionMessage(){
         transactionMessageProducer.sendMessage();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "sendTopicMessage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public void sendTopicMessage(){
+        topicMessageProducer.sendMessage();
     }
 }
