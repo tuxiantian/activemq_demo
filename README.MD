@@ -93,3 +93,11 @@ ActiveMQ from version 5.4 has an optional persistent scheduler built into the Ac
 
 意思是说要在mq的xml配置文件中，broker节点处加入schedulerSupport属性，才能使mq的任务计划生效，
 于是，我尝试加入该属性修改activemq.xml 在`<broker>`里添加属性schedulerSupport="true" 重启mq后果然生效了。
+## ActiveMQ 集群配置
+(ActiveMQ 集群配置)[http://blog.csdn.net/u010739551/article/details/50676057]
+
+Shared Filesystem Master-Slave方式 
+
+shared filesystem Master-Slave部署方式主要是通过共享存储目录来实现master和slave的热备，所有的ActiveMQ应用都在不断地获取共享目录的控制权，哪个应用抢到了控制权，它就成为master。 
+
+多个共享存储目录的应用，谁先启动，谁就可以最早取得共享目录的控制权成为master，其他的应用就只能作为slave。 
